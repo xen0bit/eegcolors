@@ -29,7 +29,7 @@ print("Label: {}".format(label_name))
 
 class_names = ['black', 'blue', 'green', 'orange', 'pink', 'purple', 'red', 'white', 'yellow']
 
-batch_size = 32
+batch_size = 1
 
 train_dataset = tf.data.experimental.make_csv_dataset(
     train_dataset_fp,
