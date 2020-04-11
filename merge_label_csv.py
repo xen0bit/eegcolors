@@ -16,7 +16,7 @@ with open('./merged_labelled_csv/train.csv', 'w') as fouttrain:
                 csvreader = csv.DictReader(fin)
                 for row in csvreader:
                     del row['timestamps']
-                    row['Color'] = str(color)
+                    row['Color'] = colors.index(color)
                     #print(row)
                     #80% to train
                     if(random.randrange(1,10) > 2):
