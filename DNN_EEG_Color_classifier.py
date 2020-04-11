@@ -4,7 +4,7 @@ import os
 #import matplotlib.pyplot as plt
 
 import tensorflow as tf
-import tensorflow.contrib.eager as tfe
+#import tensorflow.contrib.eager as tfe
 
 tf.enable_eager_execution()
 
@@ -105,8 +105,9 @@ train_accuracy_results = []
 num_epochs = 201
 
 for epoch in range(num_epochs):
-    epoch_loss_avg = tfe.metrics.Mean()
-    epoch_accuracy = tfe.metrics.Accuracy()
+    epoch_loss_avg = tf.keras.metrics.Mean()
+    epoch_accuracy = tf.keras.metrics.SparseCategoricalAccuracy()
+
 
     # Training loop - using batches of 32
     for x, y in train_dataset:
