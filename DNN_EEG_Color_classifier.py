@@ -1,7 +1,7 @@
 from __future__ import absolute_import, division, print_function
 
 import os
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 import tensorflow as tf
 import tensorflow.contrib.eager as tfe
@@ -11,7 +11,7 @@ tf.enable_eager_execution()
 print("TensorFlow version: {}".format(tf.VERSION))
 print("Eager execution: {}".format(tf.executing_eagerly()))
 
-train_dataset_url = "http://download.tensorflow.org/data/iris_training.csv"
+train_dataset_url = "https://github.com/xen0bit/eegcolors/raw/master/merged_labelled_csv/train.csv"
 
 train_dataset_fp = tf.keras.utils.get_file(fname=os.path.basename(train_dataset_url),
                                            origin=train_dataset_url)
@@ -19,7 +19,7 @@ train_dataset_fp = tf.keras.utils.get_file(fname=os.path.basename(train_dataset_
 print("Local copy of the dataset file: {}".format(train_dataset_fp))
 
 # column order in CSV file
-column_names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
+column_names = ['TP9','AF7','AF8','TP10','Right AUX','Color']
 
 feature_names = column_names[:-1]
 label_name = column_names[-1]
@@ -27,7 +27,7 @@ label_name = column_names[-1]
 print("Features: {}".format(feature_names))
 print("Label: {}".format(label_name))
 
-class_names = ['Iris setosa', 'Iris versicolor', 'Iris virginica']
+class_names = ['black', 'blue', 'green', 'orange', 'pink', 'purple', 'red', 'white', 'yellow']
 
 batch_size = 32
 
@@ -40,14 +40,14 @@ train_dataset = tf.contrib.data.make_csv_dataset(
 
 features, labels = next(iter(train_dataset))
 
-plt.scatter(features['petal_length'],
-            features['sepal_length'],
-            c=labels,
-            cmap='viridis')
+# plt.scatter(features['petal_length'],
+#             features['sepal_length'],
+#             c=labels,
+#             cmap='viridis')
 
-plt.xlabel("Petal length")
-plt.ylabel("Sepal length")
-plt.show()
+# plt.xlabel("Petal length")
+# plt.ylabel("Sepal length")
+# plt.show()
 
 
 def pack_features_vector(features, labels):
@@ -59,7 +59,7 @@ def pack_features_vector(features, labels):
 train_dataset = train_dataset.map(pack_features_vector)
 
 model = tf.keras.Sequential([
-  tf.keras.layers.Dense(10, activation=tf.nn.relu, input_shape=(4,)),  # input shape required
+  tf.keras.layers.Dense(10, activation=tf.nn.relu, input_shape=(5,)),  # input shape required
   tf.keras.layers.Dense(10, activation=tf.nn.relu),
   tf.keras.layers.Dense(3)
 ])
@@ -123,17 +123,17 @@ for epoch in range(num_epochs):
 																	epoch_loss_avg.result(),
 																	epoch_accuracy.result()))
 
-fig, axes = plt.subplots(2, sharex=True, figsize=(12, 8))
-fig.suptitle('Training Metrics')
+# fig, axes = plt.subplots(2, sharex=True, figsize=(12, 8))
+# fig.suptitle('Training Metrics')
 
-axes[0].set_ylabel("Loss", fontsize=14)
-axes[0].plot(train_loss_results)
+# axes[0].set_ylabel("Loss", fontsize=14)
+# axes[0].plot(train_loss_results)
 
-axes[1].set_ylabel("Accuracy", fontsize=14)
-axes[1].set_xlabel("Epoch", fontsize=14)
-axes[1].plot(train_accuracy_results)
+# axes[1].set_ylabel("Accuracy", fontsize=14)
+# axes[1].set_xlabel("Epoch", fontsize=14)
+# axes[1].plot(train_accuracy_results)
 
-test_url = "http://download.tensorflow.org/data/iris_test.csv"
+test_url = "https://raw.githubusercontent.com/xen0bit/eegcolors/master/merged_labelled_csv/test.csv"
 
 test_fp = tf.keras.utils.get_file(fname=os.path.basename(test_url),
                                   origin=test_url)
@@ -142,7 +142,7 @@ test_dataset = tf.contrib.data.make_csv_dataset(
     test_fp,
     batch_size,
     column_names=column_names,
-    label_name='species',
+    label_name='Color',
     num_epochs=1,
     shuffle=False)
 
