@@ -67,7 +67,7 @@ model = tf.keras.Sequential([
 
 def loss(model, x, y):
     print(model, x, y)
-    y_ = model.predict(x)
+    y_ = model(x)
     return tf.losses.sparse_softmax_cross_entropy(labels=y, logits=y_)
 
 
