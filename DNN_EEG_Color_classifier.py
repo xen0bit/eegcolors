@@ -31,14 +31,25 @@ class_names = ['black', 'blue', 'green', 'orange', 'pink', 'purple', 'red', 'whi
 
 batch_size = 32
 
-train_dataset = tf.contrib.data.make_csv_dataset(
+train_dataset = tf.data.experimental.make_csv_dataset(
     train_dataset_fp,
     batch_size,
     column_names=column_names,
     label_name=label_name,
     num_epochs=1)
 
+def pack_features_vector(features, labels):
+    """Pack the features into a single array."""
+    features = tf.stack(list(features.values()), axis=1)
+    return features, labels
+
+
+train_dataset = train_dataset.map(pack_features_vector)
+
 features, labels = next(iter(train_dataset))
+
+print(features[:5])
+
 
 # plt.scatter(features['petal_length'],
 #             features['sepal_length'],
@@ -50,13 +61,7 @@ features, labels = next(iter(train_dataset))
 # plt.show()
 
 
-def pack_features_vector(features, labels):
-    """Pack the features into a single array."""
-    features = tf.stack(list(features.values()), axis=1)
-    return features, labels
 
-
-train_dataset = train_dataset.map(pack_features_vector)
 
 model = tf.keras.Sequential([
   tf.keras.layers.Dense(10, activation=tf.nn.relu, input_shape=(5,)),  # input shape required
