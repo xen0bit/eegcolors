@@ -29,7 +29,7 @@ print("Label: {}".format(label_name))
 
 class_names = ['black', 'blue', 'green', 'orange', 'pink', 'purple', 'red', 'white', 'yellow']
 
-batch_size = 32
+batch_size = 1
 
 train_dataset = tf.contrib.data.make_csv_dataset(
     train_dataset_fp,
@@ -59,7 +59,7 @@ def pack_features_vector(features, labels):
 train_dataset = train_dataset.map(pack_features_vector)
 
 model = tf.keras.Sequential([
-  tf.keras.layers.Dense(10, activation=tf.nn.relu, input_shape=(32,)),  # input shape required
+  tf.keras.layers.Dense(10, activation=tf.nn.relu, input_shape=(5,)),  # input shape required
   tf.keras.layers.Dense(10, activation=tf.nn.relu),
   tf.keras.layers.Dense(3)
 ])
