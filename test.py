@@ -76,9 +76,9 @@ def grad(model, inputs, targets):
 	return loss_value, tape.gradient(loss_value, model.trainable_variables)
 
 
-optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
+optimizer = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=0.01)
 
-global_step = tf.train.get_or_create_global_step()
+global_step = tf.compat.v1.train.get_or_create_global_step()
 
 loss_value, grads = grad(model, features, labels)
 
