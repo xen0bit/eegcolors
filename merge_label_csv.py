@@ -19,7 +19,7 @@ with open('./merged_labelled_csv/train.csv', 'w') as fouttrain:
                     row['Color'] = colors.index(color)
                     #print(row)
                     #80% to train
-                    if(random.randrange(1,10) < 2):
+                    if(random.randrange(1,10) > 2):
                         csvwritertrain.writerow(row)
                     #20% to test
                     else:

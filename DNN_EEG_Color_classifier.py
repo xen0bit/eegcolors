@@ -35,8 +35,11 @@ train_dataset = tf.data.experimental.make_csv_dataset(
     train_dataset_fp,
     batch_size,
     column_names=column_names,
+    shuffle=True, 
+    shuffle_buffer_size=10000,
     label_name=label_name,
     num_epochs=1)
+
 
 def pack_features_vector(features, labels):
     """Pack the features into a single array."""
@@ -117,33 +120,32 @@ print("Step: {},         Loss: {}".format(optimizer.iterations.numpy(),
 train_loss_results = []
 train_accuracy_results = []
 
-num_epochs = 201
+num_epochs = 50
 
 for epoch in range(num_epochs):
-    epoch_loss_avg = tf.keras.metrics.Mean()
-    epoch_accuracy = tf.keras.metrics.SparseCategoricalAccuracy()
-
+  print('Epoch: ' + str(epoch))
+  epoch_loss_avg = tf.keras.metrics.Mean()
+  #print('Setting Accuracy')
+  epoch_accuracy = tf.keras.metrics.SparseCategoricalAccuracy()
+  #print(train_dataset)
   # Training loop - using batches of 32
-    for x, y in train_dataset:
-        # Optimize the model
-        loss_value, grads = grad(model, x, y)
-        optimizer.apply_gradients(zip(grads, model.trainable_variables))
+  for x, y in train_dataset:
+    # Optimize the model
+    loss_value, grads = grad(model, x, y)
+    optimizer.apply_gradients(zip(grads, model.trainable_variables))
 
-        # Track progress
-        epoch_loss_avg.update_state(loss_value)  # Add current batch loss
-        # Compare predicted label to actual label
-        # training=True is needed only if there are layers with different
-        # behavior during training versus inference (e.g. Dropout).
-        epoch_accuracy.update_state(y, model(x, training=True))
+    # Track progress
+    epoch_loss_avg.update_state(loss_value)  # Add current batch loss
+    # Compare predicted label to actual label
+    # training=True is needed only if there are layers with different
+    # behavior during training versus inference (e.g. Dropout).
+    epoch_accuracy.update_state(y, model(x, training=True))
 
-        # End epoch
-        train_loss_results.append(epoch_loss_avg.result())
-        train_accuracy_results.append(epoch_accuracy.result())
-
-        if epoch % 50 == 0:
-            print("Epoch {:03d}: Loss: {:.3f}, Accuracy: {:.3%}".format(epoch,
-                                                                    epoch_loss_avg.result(),
-                                                                    epoch_accuracy.result()))
+  # End epoch
+  train_loss_results.append(epoch_loss_avg.result())
+  train_accuracy_results.append(epoch_accuracy.result())
+  if epoch % 5 == 0:
+    print("Epoch {:03d}: Loss: {:.3f}, Accuracy: {:.3%}".format(epoch, epoch_loss_avg.result(),epoch_accuracy.result()))
 
 # fig, axes = plt.subplots(2, sharex=True, figsize=(12, 8))
 # fig.suptitle('Training Metrics')
@@ -154,7 +156,6 @@ for epoch in range(num_epochs):
 # axes[1].set_ylabel("Accuracy", fontsize=14)
 # axes[1].set_xlabel("Epoch", fontsize=14)
 # axes[1].plot(train_accuracy_results)
-
 test_url = "https://raw.githubusercontent.com/xen0bit/eegcolors/master/merged_labelled_csv/test.csv"
 
 test_fp = tf.keras.utils.get_file(fname=os.path.basename(test_url),
@@ -164,7 +165,7 @@ test_dataset = tf.data.experimental.make_csv_dataset(
     test_fp,
     batch_size,
     column_names=column_names,
-    label_name='species',
+    label_name='Color',
     num_epochs=1,
     shuffle=False)
 
