@@ -31,7 +31,7 @@ class_names = ['Iris setosa', 'Iris versicolor', 'Iris virginica']
 
 batch_size = 32
 
-train_dataset = tf.contrib.data.make_csv_dataset(
+train_dataset = tf.data.experimental.make_csv_dataset(
     train_dataset_fp,
     batch_size,
     column_names=column_names,
