@@ -66,7 +66,7 @@ print(features[:5])
 model = tf.keras.Sequential([
   tf.keras.layers.Dense(10, activation=tf.nn.relu, input_shape=(5,)),  # input shape required
   tf.keras.layers.Dense(10, activation=tf.nn.relu),
-  tf.keras.layers.Dense(3)
+  tf.keras.layers.Dense(len(class_names))
 ])
 
 loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
