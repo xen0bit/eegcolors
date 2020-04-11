@@ -51,9 +51,9 @@ features, labels = next(iter(train_dataset))
 
 
 def pack_features_vector(features, labels):
-	"""Pack the features into a single array."""
-	features = tf.stack(list(features.values()), axis=1)
-	return features, labels
+    """Pack the features into a single array."""
+    features = tf.stack(list(features.values()), axis=1)
+    return features, labels
 
 
 train_dataset = train_dataset.map(pack_features_vector)
@@ -66,14 +66,15 @@ model = tf.keras.Sequential([
 
 
 def loss(model, x, y):
-	y_ = model(x)
-	return tf.losses.sparse_softmax_cross_entropy(labels=y, logits=y_)
+    print(model, x, y)
+    y_ = model(x)
+    return tf.losses.sparse_softmax_cross_entropy(labels=y, logits=y_)
 
 
 def grad(model, inputs, targets):
-	with tf.GradientTape() as tape:
-		loss_value = loss(model, inputs, targets)
-	return loss_value, tape.gradient(loss_value, model.trainable_variables)
+    with tf.GradientTape() as tape:
+        loss_value = loss(model, inputs, targets)
+    return loss_value, tape.gradient(loss_value, model.trainable_variables)
 
 
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
@@ -99,29 +100,29 @@ train_accuracy_results = []
 num_epochs = 201
 
 for epoch in range(num_epochs):
-	epoch_loss_avg = tfe.metrics.Mean()
-	epoch_accuracy = tfe.metrics.Accuracy()
+    epoch_loss_avg = tfe.metrics.Mean()
+    epoch_accuracy = tfe.metrics.Accuracy()
 
-	# Training loop - using batches of 32
-	for x, y in train_dataset:
-		# Optimize the model
-		loss_value, grads = grad(model, x, y)
-		optimizer.apply_gradients(zip(grads, model.variables),
-								  global_step)
+    # Training loop - using batches of 32
+    for x, y in train_dataset:
+        # Optimize the model
+        loss_value, grads = grad(model, x, y)
+        optimizer.apply_gradients(zip(grads, model.variables),
+                                  global_step)
 
-		# Track progress
-		epoch_loss_avg(loss_value)  # add current batch loss
-		# compare predicted label to actual label
-		epoch_accuracy(tf.argmax(model(x), axis=1, output_type=tf.int32), y)
+        # Track progress
+        epoch_loss_avg(loss_value)  # add current batch loss
+        # compare predicted label to actual label
+        epoch_accuracy(tf.argmax(model(x), axis=1, output_type=tf.int32), y)
 
-	# end epoch
-	train_loss_results.append(epoch_loss_avg.result())
-	train_accuracy_results.append(epoch_accuracy.result())
+    # end epoch
+    train_loss_results.append(epoch_loss_avg.result())
+    train_accuracy_results.append(epoch_accuracy.result())
 
-	if epoch % 50 == 0:
-		print("Epoch {:03d}: Loss: {:.3f}, Accuracy: {:.3%}".format(epoch,
-																	epoch_loss_avg.result(),
-																	epoch_accuracy.result()))
+    if epoch % 50 == 0:
+        print("Epoch {:03d}: Loss: {:.3f}, Accuracy: {:.3%}".format(epoch,
+                                                                    epoch_loss_avg.result(),
+                                                                    epoch_accuracy.result()))
 
 # fig, axes = plt.subplots(2, sharex=True, figsize=(12, 8))
 # fig.suptitle('Training Metrics')
