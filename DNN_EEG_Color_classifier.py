@@ -4,6 +4,7 @@ import os
 #import matplotlib.pyplot as plt
 
 import tensorflow as tf
+from tqdm import tqdm
 #import tensorflow.contrib.eager as tfe
 
 tf.enable_eager_execution()
@@ -29,7 +30,7 @@ print("Label: {}".format(label_name))
 
 class_names = ['black', 'blue', 'green', 'orange', 'pink', 'purple', 'red', 'white', 'yellow']
 
-batch_size = 1
+batch_size = 4096
 
 train_dataset = tf.data.experimental.make_csv_dataset(
     train_dataset_fp,
@@ -120,10 +121,10 @@ print("Step: {},         Loss: {}".format(optimizer.iterations.numpy(),
 train_loss_results = []
 train_accuracy_results = []
 
-num_epochs = 50
+num_epochs = 20001
 
-for epoch in range(num_epochs):
-  print('Epoch: ' + str(epoch))
+for epoch in tqdm(range(num_epochs)):
+  #print('Epoch: ' + str(epoch))
   epoch_loss_avg = tf.keras.metrics.Mean()
   #print('Setting Accuracy')
   epoch_accuracy = tf.keras.metrics.SparseCategoricalAccuracy()
@@ -144,8 +145,10 @@ for epoch in range(num_epochs):
   # End epoch
   train_loss_results.append(epoch_loss_avg.result())
   train_accuracy_results.append(epoch_accuracy.result())
-  if epoch % 5 == 0:
+  if epoch % 25 == 0:
     print("Epoch {:03d}: Loss: {:.3f}, Accuracy: {:.3%}".format(epoch, epoch_loss_avg.result(),epoch_accuracy.result()))
+    model.save('./model/eegcolors.h5')
+
 
 # fig, axes = plt.subplots(2, sharex=True, figsize=(12, 8))
 # fig.suptitle('Training Metrics')
@@ -177,7 +180,9 @@ for (x, y) in test_dataset:
     # training=False is needed only if there are layers with different
     # behavior during training versus inference (e.g. Dropout).
     logits = model(x, training=False)
+    #print(logits)
     prediction = tf.argmax(logits, axis=1, output_type=tf.int32)
+    #print(prediction)
     test_accuracy(prediction, y)
 
 print("Test set accuracy: {:.3%}".format(test_accuracy.result()))
