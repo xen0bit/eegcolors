@@ -14,13 +14,13 @@ with open('./merged_labelled_csv/train.csv', 'w') as fouttrain:
         for color in colors:
             with open('./trimmed_csv/' + color + '.csv') as fin:
                 csvreader = csv.DictReader(fin)
+                i = 0
                 for row in csvreader:
                     del row['timestamps']
                     row['Color'] = colors.index(color)
-                    #print(row)
-                    #80% to train
-                    if(random.randrange(1,10) > 2):
-                        csvwritertrain.writerow(row)
-                    #20% to test
-                    else:
-                        csvwritertest.writerow(row)
+                    if(i < 5000):
+                        if(i % 10 == 0):
+                            csvwritertest.writerow(row)
+                        else:
+                            csvwritertrain.writerow(row)
+                    i+=1

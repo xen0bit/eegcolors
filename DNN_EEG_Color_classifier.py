@@ -1,11 +1,9 @@
 from __future__ import absolute_import, division, print_function
 
 import os
-#import matplotlib.pyplot as plt
 
 import tensorflow as tf
 from tqdm import tqdm
-#import tensorflow.contrib.eager as tfe
 
 tf.enable_eager_execution()
 
@@ -30,7 +28,7 @@ print("Label: {}".format(label_name))
 
 class_names = ['black', 'blue', 'green', 'orange', 'pink', 'purple', 'red', 'white', 'yellow']
 
-batch_size = 4096
+batch_size = 32
 
 train_dataset = tf.data.experimental.make_csv_dataset(
     train_dataset_fp,
@@ -55,17 +53,6 @@ features, labels = next(iter(train_dataset))
 print(features[:5])
 
 
-# plt.scatter(features['petal_length'],
-#             features['sepal_length'],
-#             c=labels,
-#             cmap='viridis')
-
-# plt.xlabel("Petal length")
-# plt.ylabel("Sepal length")
-# plt.show()
-
-
-
 
 model = tf.keras.Sequential([
   tf.keras.layers.Dense(10, activation=tf.nn.relu, input_shape=(5,)),  # input shape required
@@ -85,18 +72,6 @@ def loss(model, x, y, training):
 
 l = loss(model, features, labels, training=False)
 print("Loss test: {}".format(l))
-
-
-# def loss(model, x, y):
-#     #print(model, x, y)
-#     y_ = model(x)
-#     return tf.losses.sparse_softmax_cross_entropy(labels=y, logits=y_)
-
-
-# def grad(model, inputs, targets):
-#     with tf.GradientTape() as tape:
-#         loss_value = loss(model, inputs, targets)
-#     return loss_value, tape.gradient(loss_value, model.trainable_variables)
 
 def grad(model, inputs, targets):
   with tf.GradientTape() as tape:
@@ -121,7 +96,7 @@ print("Step: {},         Loss: {}".format(optimizer.iterations.numpy(),
 train_loss_results = []
 train_accuracy_results = []
 
-num_epochs = 20001
+num_epochs = 200
 
 for epoch in tqdm(range(num_epochs)):
   #print('Epoch: ' + str(epoch))
